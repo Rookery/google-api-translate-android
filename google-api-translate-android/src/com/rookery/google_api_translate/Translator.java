@@ -22,7 +22,7 @@ public class Translator {
 	private static boolean debug_flag = false;
 	private Translator() {
 		if (translate_client == null) {
-			translate_client = TranslateClient.build_v2_client(true);
+			translate_client = TranslateClient.build_v2_client(debug_flag);
 		}
 	}
 	/**
