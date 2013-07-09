@@ -11,4 +11,4 @@ Provides a simple, unofficial, Android client API for using Google Translate.
 
 1. import okhttp & restrofit with maven
 2. feature interface
-3. enum for language
+
