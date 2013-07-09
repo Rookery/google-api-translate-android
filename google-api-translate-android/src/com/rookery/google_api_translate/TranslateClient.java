@@ -8,7 +8,7 @@ import retrofit.client.OkClient;
 import retrofit.http.GET;
 import retrofit.http.Query;
 
-public class TranslateClient {
+/*packaged*/ class TranslateClient {
 	@SuppressWarnings("unused")
 	private static final String TAG = "TranslateClient";
 	
@@ -52,24 +52,24 @@ public class TranslateClient {
 							Callback<TransResult> callback);
 	}
 	
-	private static RestAdapter initClient() {
+	private static RestAdapter initClient(boolean debug) {
 
 		RestAdapter restAdapter;
 		restAdapter = new RestAdapter.Builder().setServer(API_URL)
-						.setDebug(true)
+						.setDebug(debug)
 						.setClient(new OkClient())
 						.build();
 
 		return restAdapter;
 	}
 	
-	public static void GET(final String api_key, final String targetLang, final String q,
-							Callback<TransResult> callback) {
-		RestAdapter restAdapter = initClient();
-
-		// Create an instance API interface.
-		TranslateOp Translator = restAdapter.create(TranslateOp.class);
-
-		Translator.getTranslation(api_key, targetLang, q, callback);
+	/**
+	 * factory method for build v2 translate client
+	 * @param debug log toggle
+	 * @return 
+	 */
+	public static TranslateOp build_v2_client(boolean debug) {
+		RestAdapter restAdapter = initClient(debug);
+		return restAdapter.create(TranslateOp.class);
 	}
 }
