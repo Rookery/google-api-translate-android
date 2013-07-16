@@ -3,9 +3,6 @@
  */
 package com.rookery.web_api_translate;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.util.Log;
@@ -25,6 +22,12 @@ public class MSTranslator {
 	private MSTranslateClient.TranslateOp translate_client;
 	private MSAccessTokenClient.AccessTokenOp access_token_client;
 	private static boolean debug_flag = true;
+	final private AccessToken at = new AccessToken();
+	
+	private class AccessToken{
+		public String access_token;
+		public long expired_time = 0;
+	}
 	private MSTranslator() {
 		if (translate_client == null) {
 			translate_client = MSTranslateClient.build_v2_client(debug_flag);
@@ -59,12 +62,37 @@ public class MSTranslator {
 		public abstract void onSuccess(String access_token, String expired_time);
 		public abstract void onFailed(TranslateError e);
 	}
-	
+	/**
+	 * this function will change the access token automatically. so lazy guy will call this function.
+	 * @param text
+	 * @param dest_long
+	 * @param client_id
+	 * @param client_secret
+	 * @param cb
+	 */
+	public void execute(final String text,final Language dest_lang, String client_id, String client_secret, final TransCallback cb) {
+		if (System.currentTimeMillis() < at.expired_time) {
+			execute(text, dest_lang, at.access_token, cb);
+		} else {
+			get_access_token(client_id, client_secret, new TokenCallback() {
+				
+				@Override
+				public void onSuccess(String access_token, String expired_time) {
+					execute(text, dest_lang, access_token, cb);
+				}
+				
+				@Override
+				public void onFailed(TranslateError e) {
+					cb.onFailed(e);
+				}
+			});
+		}
+	}
 	/**
 	 * execute translation
 	 * @param text the text u wonder to translated.
 	 * @param dest_lang destination language.
-	 * @param api_key api_key
+	 * @param access token. 
 	 * @param cb callback for get execute result
 	 */
 	public void execute(String text, Language dest_lang, String access_token, final TransCallback cb) {
@@ -89,24 +117,19 @@ public class MSTranslator {
 
 			@Override
 			public void success(String arg0, Response arg1) {
-				Log.d(TAG, "text:" + arg0);
+				cb.onSuccess(Language.AUTO_DETECT, arg0);
 			}
 		});
 	}
 	
+	/**
+	 * get access_token in asynchronous method. u should pay a attention to expired time. 
+	 * the token will be expired in 10 minutes.
+	 * @param client_id
+	 * @param client_secret
+	 * @param cb {@link TokenCallback} get access token asynchronously.
+	 */
 	public void get_access_token(String client_id, String client_secret, final TokenCallback cb) {
-		try {
-			final String params = "grant_type=client_credentials&scope=http://api.microsofttranslator.com"
-			           + "&client_id=" + URLEncoder.encode(client_id, "UTF-8")
-			           + "&client_secret=" + URLEncoder.encode(client_secret, "UTF-8") ;
-			Log.e(TAG, params);
-			
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
 		access_token_client.getAccessToken(client_id, client_secret, "http://api.microsofttranslator.com", "client_credentials", new retrofit.Callback<MSAccessTokenClient.AccessTokenResult>(){
 
 			@Override
@@ -117,6 +140,8 @@ public class MSTranslator {
 			@Override
 			public void success(AccessTokenResult arg0, Response arg1) {
 				cb.onSuccess(arg0.access_token, arg0.expires_in);
+				at.access_token = arg0.access_token;
+				at.expired_time = System.currentTimeMillis() + Integer.valueOf(arg0.expires_in) * 1000;
 			}
 			
 		});
