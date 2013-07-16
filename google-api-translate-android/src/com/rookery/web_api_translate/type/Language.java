@@ -48,6 +48,8 @@ public enum Language {
 	CHINESE("zh"),
 	CHINESE_SIMPLIFIED("zh-CN"),
 	CHINESE_TRADITIONAL("zh-TW"),
+	MS_CHINESE_SIMPLIFIED("zh-CHS"),
+	MS_CHINESE_TRADITIONAL("zh-CHT"),
 	CROATIAN("hr"),
 	CZECH("cs"),
 	DANISH("da"),
