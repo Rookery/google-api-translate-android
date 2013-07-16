@@ -5,7 +5,6 @@ package com.rookery.web_api_translate;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import android.util.Log;
 
 import com.rookery.web_api_translate.MSAccessTokenClient.AccessTokenResult;
 import com.rookery.web_api_translate.type.Language;
@@ -17,7 +16,6 @@ import com.rookery.web_api_translate.type.TranslateError;
  */
 public class MSTranslator {
 	
-	private static final String TAG = "MSTranslator";
 	private static MSTranslator translator;
 	private MSTranslateClient.TranslateOp translate_client;
 	private MSAccessTokenClient.AccessTokenOp access_token_client;
