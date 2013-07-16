@@ -29,4 +29,3 @@ Translator.getInstance().execute("hello,every one.my name is simsun", Language.C
 
 1. import okhttp & restrofit with maven
 2. feature interface
-3. change access tonken for ms module.
