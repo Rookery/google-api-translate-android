@@ -50,8 +50,13 @@ public class MSTranslator {
 		return translator;		
 	}
 	
-	public abstract interface Callback {
+	public abstract interface TransCallback {
 		public abstract void onSuccess(Language detected_lang, String translated_text);
+		public abstract void onFailed(TranslateError e);
+	}
+	
+	public abstract interface TokenCallback {
+		public abstract void onSuccess(String access_token, String expired_time);
 		public abstract void onFailed(TranslateError e);
 	}
 	
@@ -62,7 +67,7 @@ public class MSTranslator {
 	 * @param api_key api_key
 	 * @param cb callback for get execute result
 	 */
-	public void execute(String text, Language dest_lang, String access_token, final Callback cb) {
+	public void execute(String text, Language dest_lang, String access_token, final TransCallback cb) {
 		String dest_lang_str;
 		// catch null exception. set to English for default
 		if (dest_lang == null) {
@@ -89,7 +94,7 @@ public class MSTranslator {
 		});
 	}
 	
-	public void get_access_token(String client_id, String client_secret) {
+	public void get_access_token(String client_id, String client_secret, final TokenCallback cb) {
 		try {
 			final String params = "grant_type=client_credentials&scope=http://api.microsofttranslator.com"
 			           + "&client_id=" + URLEncoder.encode(client_id, "UTF-8")
@@ -106,13 +111,12 @@ public class MSTranslator {
 
 			@Override
 			public void failure(RetrofitError arg0) {
-				// TODO Auto-generated method stub
-				
+				cb.onFailed(new TranslateError(arg0));
 			}
 
 			@Override
 			public void success(AccessTokenResult arg0, Response arg1) {
-				Log.d(TAG, "access token is :" + arg0.access_token);				
+				cb.onSuccess(arg0.access_token, arg0.expires_in);
 			}
 			
 		});

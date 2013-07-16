@@ -1,13 +1,13 @@
 package com.rookery.web_api_translate;
 
-import java.util.ArrayList;
-
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.Query;
+
+import com.rookery.web_api_translate.util.SimpleXmlConverter;
 
 /*package*/ class MSTranslateClient {
 	@SuppressWarnings("unused")
@@ -39,6 +39,7 @@ import retrofit.http.Query;
 		restAdapter = new RestAdapter.Builder().setServer(API_URL)
 						.setDebug(debug)
 						.setClient(new OkClient())
+						.setConverter(new SimpleXmlConverter())
 						.build();
 
 		return restAdapter;

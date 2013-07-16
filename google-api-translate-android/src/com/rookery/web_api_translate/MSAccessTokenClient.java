@@ -7,7 +7,6 @@ import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.Headers;
 import retrofit.http.POST;
-import retrofit.http.Query;
 
 /*package*/ class MSAccessTokenClient {
 	@SuppressWarnings("unused")
