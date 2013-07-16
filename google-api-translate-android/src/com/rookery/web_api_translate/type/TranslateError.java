@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.rookery.google_api_translate.type;
+package com.rookery.web_api_translate.type;
 
 /**
  * @author simsun

@@ -1,4 +1,4 @@
-package com.rookery.google_api_translate;
+package com.rookery.web_api_translate;
 
 import java.util.ArrayList;
 
@@ -8,7 +8,7 @@ import retrofit.client.OkClient;
 import retrofit.http.GET;
 import retrofit.http.Query;
 
-/*packaged*/ class TranslateClient {
+/*packaged*/ class GoogleTranslateClient {
 	@SuppressWarnings("unused")
 	private static final String TAG = "TranslateClient";
 	

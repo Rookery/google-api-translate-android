@@ -1,28 +1,28 @@
 /**
  * 
  */
-package com.rookery.google_api_translate;
+package com.rookery.web_api_translate;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import com.rookery.google_api_translate.TranslateClient.TransResult;
-import com.rookery.google_api_translate.TranslateClient.TranslateOp;
-import com.rookery.google_api_translate.type.Language;
-import com.rookery.google_api_translate.type.TranslateError;
+import com.rookery.web_api_translate.GoogleTranslateClient.TransResult;
+import com.rookery.web_api_translate.GoogleTranslateClient.TranslateOp;
+import com.rookery.web_api_translate.type.Language;
+import com.rookery.web_api_translate.type.TranslateError;
 
 /**
  * @author simsun
  *
  */
-public class Translator {
+public class GoogleTranslator {
 	
-	private static Translator translator;
+	private static GoogleTranslator translator;
 	private TranslateOp translate_client;
-	private static boolean debug_flag = false;
-	private Translator() {
+	private static boolean debug_flag = true;
+	private GoogleTranslator() {
 		if (translate_client == null) {
-			translate_client = TranslateClient.build_v2_client(debug_flag);
+			translate_client = GoogleTranslateClient.build_v2_client(debug_flag);
 		}
 	}
 	/**
@@ -33,10 +33,10 @@ public class Translator {
 		debug_flag = true;
 	}
 	
-	public static Translator getInstance() {
-		synchronized (Translator.class) {
+	public static GoogleTranslator getInstance() {
+		synchronized (GoogleTranslator.class) {
 			if (translator == null) {
-				translator = new Translator();
+				translator = new GoogleTranslator();
 			}	
 		}
 		return translator;		
@@ -55,11 +55,22 @@ public class Translator {
 	 * @param cb callback for get execute result
 	 */
 	public void execute(String text, Language dest_lang, String api_key, final Callback cb) {
-		translate_client.getTranslation(api_key, dest_lang.toString(), text, new retrofit.Callback<TranslateClient.TransResult>() {
+		String dest_lang_str;
+		// catch null exception. set to English for default
+		if (dest_lang == null) {
+			dest_lang_str = "en";
+		} else {
+			dest_lang_str = dest_lang.toString();
+			//catch the language cannot support by google, set to English for default.
+			if (dest_lang_str == null || dest_lang_str.length() == 0) {
+				dest_lang_str = "en";
+			}
+		}
+		translate_client.getTranslation(api_key, dest_lang_str, text, new retrofit.Callback<GoogleTranslateClient.TransResult>() {
 			
 			@Override
 			public void success(TransResult result, Response response) {
-				for (TranslateClient.TransEntity entity : result.get_entities()) {
+				for (GoogleTranslateClient.TransEntity entity : result.get_entities()) {
 					cb.onSuccess(Language.fromString(entity.get_source_language()), entity.get_translated_text());
 				}						
 			}

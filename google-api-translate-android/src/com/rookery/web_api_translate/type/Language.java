@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with google-api-translate-java. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.rookery.google_api_translate.type;
+package com.rookery.web_api_translate.type;
 
 /**
  * Defines language information for the Google Translate API.
